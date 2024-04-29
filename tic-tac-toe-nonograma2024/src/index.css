@@ -1,0 +1,114 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  padding: 0;
+  justify-content: center;
+}
+
+.square {
+  background: #fff;
+  border: 1px solid #999;
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+}
+
+.board {
+  display: grid;
+  justify-content: center;
+}
+
+.horizontal {
+  display: flex;
+}
+
+.vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.rowClues {
+  display: grid;
+}
+
+.colClues {
+  display: grid;
+}
+
+.clue {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: #b9d6e0;
+  border-radius: 8px;
+  margin: 5px;
+  padding: 3px;
+}
+
+.clue div {
+  margin: 2px
+}
+
+.colClues .clue {
+  flex-direction: column;
+}
+
+.game {
+  display: flex;
+  flex-direction: column; /* esto lo cambie yo, no se si esta bien*/
+}
+
+.game-info { 
+  margin-top: 20px; /* Márgen superior de 20 píxeles */
+  margin-bottom: 20px; /* Márgen inferior de 20 píxeles */
+  margin-left: 10px; /* Márgen izquierdo de 10 píxeles */
+  margin-right: 10px; /* Márgen derecho de 10 píxeles */
+  justify-content: center;
+}
+
+.game-mode { 
+  margin-top: 20px; /* Márgen superior de 20 píxeles */
+  margin-bottom: 20px; /* Márgen inferior de 20 píxeles */
+  margin-left: 10px; /* Márgen izquierdo de 10 píxeles */
+  margin-right: 10px; /* Márgen derecho de 10 píxeles */
+  justify-content: center;
+}
+
+#root {
+  display: flex;
+  justify-content: center; /* Centrado horizontal */
+}
+
+/* Estilos para los botones */
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.button-container button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 150px; /* Ancho de 150 píxeles */
+  height: 60px; /* Alto de 60 píxeles */
+}
+
+/* Estilos para el botón "Pintar" cuando está seleccionado */
+.button-container button.painting-mode {
+  background-color: #28a745; /* Color verde */
+}
+
+
+.button-container button:hover {
+  background-color: #0056b3;
+}
