@@ -41,6 +41,7 @@ function Game() {
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
       }
+      //agregar chequeo inicial de ganar o no
     });
   }
 
