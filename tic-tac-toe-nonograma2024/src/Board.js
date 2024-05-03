@@ -12,13 +12,6 @@ function Board({ grid, rowsClues, colsClues, onClick }) {
                 style={{
                     gridTemplateRows: '60px',
                     gridTemplateColumns: `60px repeat(${numOfCols}, 40px)`
-                    /*
-                       60px  40px 40px 40px 40px 40px 40px 40px   (gridTemplateColumns)
-                      ______ ____ ____ ____ ____ ____ ____ ____
-                     |      |    |    |    |    |    |    |    |  60px
-                     |      |    |    |    |    |    |    |    |  (gridTemplateRows)
-                      ------ ---- ---- ---- ---- ---- ---- ---- 
-                     */
                 }}
             >
                 <div>{/* top-left corner square */}</div>
@@ -32,7 +25,6 @@ function Board({ grid, rowsClues, colsClues, onClick }) {
                     style={{
                         gridTemplateRows: `repeat(${numOfRows}, 40px)`,
                         gridTemplateColumns: '60px'
-                        /* IDEM column clues above */
                     }}
                 >
                     {rowsClues.map((clue, i) =>

@@ -17,6 +17,14 @@ body {
   margin-top: -1px;
   padding: 0;
   text-align: center;
+
+  
+}
+
+.paintedCell {
+  background-color: rgb(235, 131, 112); 
+  text-transform: none;
+  color: transparent;
 }
 
 .board {
@@ -42,7 +50,7 @@ body {
 }
 
 .clue.active{
-  background-color: green;
+  background-color: #28a745;
   /* display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -72,6 +80,8 @@ body {
 
 .game {
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column; /* esto lo cambie yo, no se si esta bien*/
 }
 
