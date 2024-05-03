@@ -41,6 +41,17 @@ body {
   display: grid;
 }
 
+.clue.active{
+  background-color: green;
+  /* display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border-radius: 8px;
+  margin: 5px;
+  padding: 3px; */
+}
+
+
 .clue {
   display: flex;
   justify-content: flex-end;

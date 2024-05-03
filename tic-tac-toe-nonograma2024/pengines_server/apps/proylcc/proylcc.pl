@@ -37,17 +37,19 @@ put(Content, [RowN, ColN], RowsClues, ColsClues, Grid, NewGrid, RowSat, ColSat):
 		;
 	replace(_Cell, ColN, Content, Row, NewRow)),
 
-	verificarPistaLinea(RowN,RowClues,NewGrid,RowSat).
-	% crearLineaColumna(ColN,NewGrid,Linea),
-	% verificarPistaLinea(ColN,ColClues,NewGrid,ColSat).
+
+	nth0(RowN,NewGrid,Fila),
+	verificarPistaLinea(RowN,RowsClues,Fila,RowSat),
+
+
+	crearLineaColumna(ColN,NewGrid,Columna),
+	verificarPistaLinea(ColN,ColsClues,Columna,ColSat).
 
 
 crearLineaColumna(ColN,NewGrid,Linea):-
 	Contador is 0,
 	proper_length(NewGrid,Longitud),
 	agregarElemento(Contador,NewGrid,ColN,Longitud,[],Linea)
-	
-
 .
 
 
@@ -64,35 +66,34 @@ agregarElemento(Contador,NewGrid,ColN,Longitud,ListaAux,Lista):-
 	insertarAlFinal(Elemento,ListaAux,Lista)
 .
 
-verificarPistaLinea(RowN,RowClues,NewGrid,RowSat):-
-	nth0(RowN,NewGrid,Fila),
-	recorrerFila(Fila,[],Lista,0),
-	nth0(RowN,RowClues,PistaFila),
-	satisfaceFila(RowSat,Lista,PistaFila).
+verificarPistaLinea(LineN,LineClues,Linea,LineSat):-
+	recorrerFila(Linea,[],Lista,0),
+	nth0(LineN,LineClues,PistaFila),
+	satisfaceFila(LineSat,Lista,PistaFila).
 	
-satisfaceFila(RowSat,Lista,PistaFila):-
-	Lista=PistaFila, RowSat=1; 
-	Lista\=PistaFila, RowSat=0.
+satisfaceFila(LineSat,Lista,PistaFila):-
+	Lista==PistaFila, LineSat=1; 
+	Lista\==PistaFila, LineSat=0.
 
 
 
 % Casos base de predicado recorrerFila
-recorrerFila([X|[]],ListaAux,Lista,Contador):-\
+recorrerFila([X],ListaAux,Lista,Contador):-
 	X=="#",
     NuevoContador is Contador+1,
 	insertarAlFinal(NuevoContador,ListaAux,Lista).
 
-recorrerFila([X|[]],ListaAux,Lista,Contador):-
+recorrerFila([X],ListaAux,Lista,Contador):-
 	X=="X",
     Contador>0,
 	insertarAlFinal(Contador,ListaAux,Lista).
-
-recorrerFila([_|[]],ListaAux,Lista,Contador):-
+recorrerFila([_],ListaAux,Lista,Contador):-
     Contador>0,
 	insertarAlFinal(Contador,ListaAux,Lista).
 
-recorrerFila([_|[]], ListaAux, Lista, Contador):-
-	Contador is 0.
+recorrerFila([_], ListaAux, Lista, Contador):-
+	Contador is 0,
+    Lista=ListaAux.
 
 % Casos recursivos de predicado recorrerFila
 recorrerFila([X|Xs],ListaAux,Lista,Contador):-
@@ -121,12 +122,8 @@ recorrerFila([_|Xs],ListaAux,Lista,Contador):-
 	recorrerFila(Xs,ListaAux,Lista,Contador).
 
 
+
 % Caso base de predicado insertarAlFinal
 insertarAlFinal(E,[],[E]).
 % Caso recursivo de predicado insertarAlFinal
-insertarAlFinal(E,[X|L1],[X|L2]):-insertarAlFinal(E,L1,L2).	
-
-
-
-
-
+insertarAlFinal(E,[X|L1],[X|L2]):-insertarAlFinal(E,L1,L2).
