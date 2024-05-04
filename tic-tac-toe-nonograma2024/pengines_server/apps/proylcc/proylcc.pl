@@ -59,12 +59,13 @@ agregarElemento(Contador,NewGrid,ColN,Longitud,ListaAux,Lista):-
 	nth0(ColN,Fila,Elemento),
 	insertarAlFinal(Elemento,ListaAux,ListaNueva),
 	NuevoContador is Contador +1,
-	agregarElemento(NuevoContador,NewGrid,ColN,Longitud,ListaNueva,Lista);
+	agregarElemento(NuevoContador,NewGrid,ColN,Longitud,ListaNueva,Lista).
+
+agregarElemento(Contador,NewGrid,ColN,Longitud,ListaAux,Lista):-
 	Contador is Longitud-1,
 	nth0(Contador,NewGrid,Fila),
 	nth0(ColN,Fila,Elemento),
-	insertarAlFinal(Elemento,ListaAux,Lista)
-.
+	insertarAlFinal(Elemento,ListaAux,Lista).
 
 verificarPistaLinea(LineN,LineClues,Linea,LineSat):-
 	recorrerFila(Linea,[],Lista,0),
@@ -74,8 +75,6 @@ verificarPistaLinea(LineN,LineClues,Linea,LineSat):-
 satisfaceFila(LineSat,Lista,PistaFila):-
 	Lista==PistaFila, LineSat=1; 
 	Lista\==PistaFila, LineSat=0.
-
-
 
 % Casos base de predicado recorrerFila
 recorrerFila([X],ListaAux,Lista,Contador):-
