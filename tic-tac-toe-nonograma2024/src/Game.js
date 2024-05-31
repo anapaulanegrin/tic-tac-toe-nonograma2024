@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, version } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
 
 import WinnerModal from './components/WinnerModal';
+import { activeClue } from './store/activeClue';
 
 let pengine;
 
@@ -14,20 +15,16 @@ function Game() {
   const [colsClues, setColsClues] = useState(null);
   const [waiting, setWaiting] = useState(false);
   const [isPaintingMode, setIsPaintingMode] = useState(false);
-  const [elemento,setElemento]=useState('X');
-  const [modo,setModo]=useState("Cross mode");
-
-  const [winner, setWinner] = useState(false)
-  const [total, setTotal] = useState('')
+  const [elemento, setElemento] = useState('X');
+  const [modo, setModo] = useState("Cross mode");
+  const [winner, setWinner] = useState(false);
 
 
   const togglePaintingMode = () => {
     setIsPaintingMode(prevState => !prevState);
-    if(modo==="Cross mode") {setModo("Paint mode"); setElemento('#');}
-    if(modo==="Paint mode"){ setModo("Cross mode"); setElemento('X');}
+    if (modo === "Cross mode") { setModo("Paint mode"); setElemento('#'); }
+    if (modo === "Paint mode") { setModo("Cross mode"); setElemento('X'); }
   };
-
-  
 
   useEffect(() => {
     // Creation of the pengine server instance.    
@@ -36,13 +33,24 @@ function Game() {
     PengineClient.init(handleServerReady);
   }, []);
 
-  const handleWinner = () => {
-    let a = document.getElementsByClassName('clue active')
-    if ( winner === null ) throw new Error('Winner is null, state is broken')
-    else if ( a.length === total) {
-      setWinner(true)
-    } 
-  }
+  // useEffect(() => {
+  //   if (rowsClues && colsClues) {
+  //     checkWinner();
+  //   }
+  // }, [rowsClues, colsClues]);
+
+  const checkWinner = () => {
+    const allActive = document.getElementsByClassName('clue active');
+    const allClue = document.getElementsByClassName('clue');
+    console.log(allClue);
+    if (allActive.length === allClue.length) {
+      // ACA se podria forzar q se pinte todo
+      console.log('Este es todos los elementos activos ' ,allActive);
+      console.log('Este es todos los elementos ' ,allActive);
+      setWinner(true);
+    }
+  };
+
 
   function handleServerReady(instance) {
     pengine = instance;
@@ -52,81 +60,56 @@ function Game() {
         setGrid(response['Grid']);
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
-        setTotal(response['RowClues'].length + response['ColumClues'].length)
-        InicialCheck(response['RowClues'],response['ColumClues'],response['Grid'])
+        InicialCheck(response['RowClues'], response['ColumClues'], response['Grid'])
       }
-    }); 
+    });
   }
 
-  function InicialCheck(row,col,grid){
-    for(let i = 0; i < col.length; i++){
-      for(let j = 0; j < row.length; j++){
-          const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
-          const rowsCluesS = JSON.stringify(row);
-          const colsCluesS = JSON.stringify(col);
-          const queryS = `put(${grid[i][j]}, [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`;
-        
-          pengine.query(queryS, (success, response) => {
-            if (success) {
-              setGrid(response['ResGrid']);
-              const a = response['RowSat'];
-              const b = response['ColSat'];
-        
-              var row = document.getElementsByClassName("rowClues");
-              var col = document.getElementsByClassName("colClues");
-        
-              if (a === null) {
-                throw new Error('The state rowSat is null, this is impossible');
-              } else if (a === 1) row[0].children[i].classList.add('active');
-              else row[0].children[i].classList.remove('active');
-        
-              if (b === null) {
-                throw new Error('The state colSat is null, this is impossible');
-              } else if (b === 1) col[0].children[j + 1].classList.add('active');
-              else col[0].children[j + 1].classList.remove('active');
-            }
-          });
+  function InicialCheck(row, col, grid) {
+    for (let i = 0; i < col.length; i++) {
+      for (let j = 0; j < row.length; j++) {
+        const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
+        const rowsCluesS = JSON.stringify(row);
+        const colsCluesS = JSON.stringify(col);
+        const queryS = `put(${grid[i][j]}, [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`;
+
+        pengine.query(queryS, (success, response) => {
+          if (success) {
+            setGrid(response['ResGrid']);
+            const a = response['RowSat'];
+            const b = response['ColSat'];
+            activeClue(a, b, i, j)
+          }
+        });
       }
     }
-    console.log(total);
+    checkWinner()
   }
- 
+
   function handleClick(i, j) {
     // No action on click if we are waiting.
     if (waiting) {
       return;
     }
-  
+
     // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
     const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
     const rowsCluesS = JSON.stringify(rowsClues);
     const colsCluesS = JSON.stringify(colsClues);
     const queryS = `put("${elemento}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`;
     setWaiting(true);
-  
+
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['ResGrid']);
         const a = response['RowSat'];
         const b = response['ColSat'];
-  
-        var row = document.getElementsByClassName("rowClues");
-        var col = document.getElementsByClassName("colClues");
-  
-        if (a === null) {
-          throw new Error('The state rowSat is null, this is impossible');
-        } else if (a === 1) row[0].children[i].classList.add('active');
-        else row[0].children[i].classList.remove('active');
-  
-        if (b === null) {
-          throw new Error('The state colSat is null, this is impossible');
-        } else if (b === 1) col[0].children[j + 1].classList.add('active');
-        else col[0].children[j + 1].classList.remove('active');
+        activeClue(a, b, i, j)
       }
-      handleWinner();
+      checkWinner()
       setWaiting(false);
     });
-  }  
+  }
 
   if (!grid) {
     return null;
@@ -134,7 +117,7 @@ function Game() {
 
   const statusText = 'Keep playing!';
 
-  
+
 
   return (
     <div className="game">
@@ -160,7 +143,7 @@ function Game() {
         </button>
       </div>
 
-      { !winner ? '' : <WinnerModal setWinner={setWinner} /> }
+      {!winner ? '' : <WinnerModal setWinner={setWinner} />}
     </div>
   );
 }

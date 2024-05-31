@@ -12,8 +12,8 @@ const WinnerModal = ({setWinner}) => {
             <p className="message">Congratulations, you have won!!</p>
             <p className="message">Would you like to play again?</p>
             <div className="options">
-                <button onClick={() => handleClick()} class="btn">Yes</button>
-                <button onClick={() => setWinner(false)} class="btn">No</button>
+                <button onClick={() => handleClick()} className="btn">Yes</button>
+                <button onClick={() => setWinner(false)} className="btn">No</button>
             </div>
         </div>
     )

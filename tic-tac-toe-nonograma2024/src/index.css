@@ -6,7 +6,10 @@ body {
   font-family: sans-serif;
   padding: 0;
   justify-content: center;
+
+
 }
+
 
 .square {
   background: #fff;
@@ -17,7 +20,6 @@ body {
   margin-top: -1px;
   padding: 0;
   text-align: center;
-
   
 }
 
