@@ -1,9 +1,9 @@
-import React, { useEffect, useState, version } from 'react';
+import React, { useEffect, useState } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
 
 import WinnerModal from './components/WinnerModal';
-import { activeClue } from './store/activeClue';
+import { activeClue, activeClueInicial } from './store/activeClue';
 
 let pengine;
 
@@ -19,7 +19,6 @@ function Game() {
   const [modo, setModo] = useState("Cross mode");
   const [winner, setWinner] = useState(false);
 
-
   const togglePaintingMode = () => {
     setIsPaintingMode(prevState => !prevState);
     if (modo === "Cross mode") { setModo("Paint mode"); setElemento('#'); }
@@ -33,20 +32,17 @@ function Game() {
     PengineClient.init(handleServerReady);
   }, []);
 
-  // useEffect(() => {
-  //   if (rowsClues && colsClues) {
-  //     checkWinner();
-  //   }
-  // }, [rowsClues, colsClues]);
+  useEffect(() => {
+    if (grid && rowsClues && colsClues) {
+      checkWinner(rowsClues.length, colsClues.length);
+    }
+  }, [grid, rowsClues, colsClues]);
 
-  const checkWinner = () => {
-    const allActive = document.getElementsByClassName('clue active');
-    const allClue = document.getElementsByClassName('clue');
-    console.log(allClue);
-    if (allActive.length === allClue.length) {
-      // ACA se podria forzar q se pinte todo
-      console.log('Este es todos los elementos activos ' ,allActive);
-      console.log('Este es todos los elementos ' ,allActive);
+  const checkWinner = (row, col) => {
+    const allActive = window.document.getElementsByClassName('active');
+    const total = row + col;
+
+    if (allActive.length === total) {
       setWinner(true);
     }
   };
@@ -78,12 +74,13 @@ function Game() {
             setGrid(response['ResGrid']);
             const a = response['RowSat'];
             const b = response['ColSat'];
-            activeClue(a, b, i, j)
+            // console.log('cuadrado en grilla: ', ',en la fila: ', i,'y columna: ', j);
+            activeClueInicial(a, b, i, j)
           }
         });
       }
     }
-    checkWinner()
+    checkWinner(row.length, col.length)
   }
 
   function handleClick(i, j) {
@@ -106,7 +103,8 @@ function Game() {
         const b = response['ColSat'];
         activeClue(a, b, i, j)
       }
-      checkWinner()
+
+      checkWinner(rowsClues.length, colsClues.length)
       setWaiting(false);
     });
   }
@@ -128,19 +126,23 @@ function Game() {
         onClick={(i, j) => handleClick(i, j)}
 
       />
-      <div className="game-info">
+      {/* <div className="game-info">
         {statusText}
-      </div>
+      </div> */}
 
-      <div className="game-mode">
+      {/* <div className="game-mode">
         {modo}
-      </div>
+      </div> */}
 
-      {/* Boton */}
-      <div className="button-container">
-        <button className={`painting-mode ${isPaintingMode ? 'selected' : ''}`} onClick={togglePaintingMode}>
-          {isPaintingMode ? 'Activate cross mode' : 'Activate Paint mode'}
-        </button>
+      {/* Boton   {` ${isPaintingMode ? 'selected' : ''}`}  onClick={ (e) => e.currentTarget(elem => elem.value)} value={active} */}
+      <div className="buttons-container">
+        <div className='slider'>
+          <button className={`mode-boton ${isPaintingMode ? 'selected' : ''}`} onClick={togglePaintingMode}>
+            {isPaintingMode ? '⬛' : 'X'}
+          </button>
+        </div>
+        <button className='pist-button pista'>💡</button>
+        <button className='pist-button todo'>🤞</button>
       </div>
 
       {!winner ? '' : <WinnerModal setWinner={setWinner} />}

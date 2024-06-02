@@ -1,5 +1,6 @@
 import './WinnerModal.css'
 
+
 const WinnerModal = ({setWinner}) => {
 
     const handleClick = () => {

@@ -12,7 +12,6 @@ body {
 
 
 .square {
-  background: #fff;
   border: 1px solid #999;
   font-size: 24px;
   font-weight: bold;
@@ -20,13 +19,38 @@ body {
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  
+
+  animation: offColor .1s linear both;
+}
+
+@keyframes offColor {
+  from {
+
+    background-color: rgba(53, 121, 185, 0.897);
+  }
+
+  to {
+    background-color: white;
+  }
+
 }
 
 .paintedCell {
-  background-color: rgb(235, 131, 112); 
   text-transform: none;
   color: transparent;
+
+  animation: paintColor .1s linear both;
+}
+
+@keyframes paintColor {
+  from {
+    background-color: white;
+  }
+
+  to {
+    background-color: rgba(53, 121, 185, 0.897);
+  }
+
 }
 
 .board {
@@ -51,20 +75,29 @@ body {
   display: grid;
 }
 
-.clue.active{
-  background-color: #28a745;
-  /* display: flex;
-  justify-content: flex-end;
+.active div {
+  margin: 2px
+}
+
+.colClues .active {
+  flex-direction: column;
+}
+
+.active {
+  border: 2px gray solid;
+  background-color: rgba(88, 221, 83, 0.993);
+  display: flex;
+  justify-content: center;
   align-items: center;
   border-radius: 8px;
   margin: 5px;
-  padding: 3px; */
+  padding: 3px;
 }
 
 
 .clue {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   background: #b9d6e0;
   border-radius: 8px;
@@ -84,37 +117,149 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column; /* esto lo cambie yo, no se si esta bien*/
+  flex-direction: column;
+  /* esto lo cambie yo, no se si esta bien*/
 }
 
-.game-info { 
-  margin-top: 20px; /* Márgen superior de 20 píxeles */
-  margin-bottom: 20px; /* Márgen inferior de 20 píxeles */
-  margin-left: 10px; /* Márgen izquierdo de 10 píxeles */
-  margin-right: 10px; /* Márgen derecho de 10 píxeles */
+.game-info {
+  margin-top: 20px;
+  /* Márgen superior de 20 píxeles */
+  margin-bottom: 20px;
+  /* Márgen inferior de 20 píxeles */
+  margin-left: 10px;
+  /* Márgen izquierdo de 10 píxeles */
+  margin-right: 10px;
+  /* Márgen derecho de 10 píxeles */
   justify-content: center;
 }
 
-.game-mode { 
-  margin-top: 20px; /* Márgen superior de 20 píxeles */
-  margin-bottom: 20px; /* Márgen inferior de 20 píxeles */
-  margin-left: 10px; /* Márgen izquierdo de 10 píxeles */
-  margin-right: 10px; /* Márgen derecho de 10 píxeles */
+.game-mode {
+  margin-top: 20px;
+  /* Márgen superior de 20 píxeles */
+  margin-bottom: 20px;
+  /* Márgen inferior de 20 píxeles */
+  margin-left: 10px;
+  /* Márgen izquierdo de 10 píxeles */
+  margin-right: 10px;
+  /* Márgen derecho de 10 píxeles */
   justify-content: center;
 }
 
 #root {
   display: flex;
-  justify-content: center; /* Centrado horizontal */
+  justify-content: center;
+  height: 100vh;
+  /* Centrado horizontal */
 }
+
+
+/* ------------------------------------------------------------------------------ */
 
 /* Estilos para los botones */
-.button-container {
+.buttons-container {
+  margin-top: 20px;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+  width: 260px;
 }
 
-.button-container button {
+.slider {
+  width: 86px;
+  height: 41px;
+  border-radius: 40px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: inherit;
+
+  background: white;
+  border: 1px solid black;
+  box-shadow: 0 0 0 black;
+  transition: all 1s linear;
+
+  padding: 0 3px;
+}
+
+
+.mode-boton {
+  content: '⬛';
+  font-size: 15px;
+  font-weight: 800;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: white;
+
+  box-shadow: 0 0px 3px 1.5px rgba(0, 0, 0, 0.301);
+  animation: move-in .4s ease-out both;
+  
+}
+
+@keyframes move-in {
+  from {
+    transform: translateX(-22px);
+  }
+
+  to {
+    transform: translateX(22px);
+  }
+}
+
+.selected {
+  animation: move-out .4s ease-out both;
+}
+
+@keyframes move-out {
+  from {
+    transform: translateX(22px);
+  }
+
+  to {
+    transform: translateX(-22px);
+  }
+}
+
+.pist-button {
+  width: 41px;
+  height: 41px;
+  border-radius: 40px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: inherit;
+  font-size: 20px;
+
+  background: white;
+  box-shadow: 0 0 0 black;
+  transition: all .5s linear;
+
+  padding: 0 3px;
+  /* transition: all .5 linear; */
+}
+
+.pista:focus {
+  background-color: rgba(53, 121, 185, 0.897);
+  border-color: rgba(53, 121, 185, 0.897);
+  scale: 1.1;
+}
+
+.todo:focus {
+  background-color: rgba(53, 121, 185, 0.897);
+  border-color: rgba(53, 121, 185, 0.897);
+  scale: 1.1;
+}
+
+
+/* .button-container button {
   padding: 10px 20px;
   font-size: 16px;
   background-color: #007bff;
@@ -122,16 +267,14 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  width: 150px; /* Ancho de 150 píxeles */
-  height: 60px; /* Alto de 60 píxeles */
-}
+} */
 
 /* Estilos para el botón "Pintar" cuando está seleccionado */
-.button-container button.painting-mode {
-  background-color: #28a745; /* Color verde */
+/* .button-container button.painting-mode {
+  background-color: #28a745;
 }
 
 
 .button-container button:hover {
   background-color: #0056b3;
-}
+} */
