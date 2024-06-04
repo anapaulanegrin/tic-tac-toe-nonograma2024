@@ -5,6 +5,23 @@ import Board from './Board';
 import WinnerModal from './components/WinnerModal';
 import { activeClue, activeClueInicial } from './store/activeClue';
 
+// logica para sumar, puede ser otra funcion, compruebe que va en la grilla, es decir el valor. 
+// query pedro = (grilla, i, j)}
+// seguramente necesiten hacer una funcion con async await
+// -------------------
+// Otra opcion es no utilizar la grilla, usar la auxiliar y hacer una funcion que simplemente traiga el i y j. para luego devolver
+// el resultado en la grilla auxiliar.
+
+
+// Esto tienen q sacarlo cuando este el prolog
+const gridAuxiliar = [
+  ['_', '_', '_', '_', "#"],
+  ['_', "#", '_', "#", '_'],
+  ['_', '_', "#", '_', '_'],
+  ["#", "#", '_', "#", '_'],
+  ["#", '_', "#", '_', "#"]
+]
+
 let pengine;
 
 function Game() {
@@ -18,6 +35,10 @@ function Game() {
   const [elemento, setElemento] = useState('X');
   const [modo, setModo] = useState("Cross mode");
   const [winner, setWinner] = useState(false);
+
+  // const [ gridAuxiliar, setGridAuxiliar ] = useState(null);
+  
+  const [openHelp, setOpenHelp] = useState(false)
 
   const togglePaintingMode = () => {
     setIsPaintingMode(prevState => !prevState);
@@ -51,6 +72,7 @@ function Game() {
   function handleServerReady(instance) {
     pengine = instance;
     const queryS = 'init(RowClues, ColumClues, Grid)';
+    // const queryGridWin = gridAuxiliar
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['Grid']);
@@ -59,6 +81,11 @@ function Game() {
         InicialCheck(response['RowClues'], response['ColumClues'], response['Grid'])
       }
     });
+    // pengine.query(queryGridWin, (success, response) => {
+    //   if (success) {
+    //     setGridAuxiliar(response['gridAuxiliar']);
+    //   }
+    // });
   }
 
   function InicialCheck(row, col, grid) {
@@ -113,28 +140,42 @@ function Game() {
     return null;
   }
 
-  const statusText = 'Keep playing!';
-
+  const checkHelp = () => {
+    // Cambia el estado para ver la ayuda
+    setOpenHelp(prevState => !prevState)
+    // Setea un delay y saca la ayuda
+    setTimeout(() => {
+      setOpenHelp(prevState => !prevState)
+    }, 2500);
+  }
 
 
   return (
     <div className="game">
+
       <Board
         grid={grid}
         rowsClues={rowsClues}
         colsClues={colsClues}
         onClick={(i, j) => handleClick(i, j)}
-
+      // className={openHelp ? 'invi' : ''}
       />
-      {/* <div className="game-info">
-        {statusText}
-      </div> */}
+      {
+        openHelp ? (
+          <div className='container-help'>
+            <Board
+              grid={gridAuxiliar} // gridAuxiliar
+              rowsClues={null}
+              colsClues={null}
+              onClick={(i, j) => handleClick(i, j)}
+              className='grid-auxiliar'
+            />
+            {/* <button className='pist-button cross'>X</button> */}
+          </div>
+        )
+          : ''
+      }
 
-      {/* <div className="game-mode">
-        {modo}
-      </div> */}
-
-      {/* Boton   {` ${isPaintingMode ? 'selected' : ''}`}  onClick={ (e) => e.currentTarget(elem => elem.value)} value={active} */}
       <div className="buttons-container">
         <div className='slider'>
           <button className={`mode-boton ${isPaintingMode ? 'selected' : ''}`} onClick={togglePaintingMode}>
@@ -142,12 +183,14 @@ function Game() {
           </button>
         </div>
         <button className='pist-button pista'>💡</button>
-        <button className='pist-button todo'>🤞</button>
+        <button onClick={checkHelp} className='pist-button todo'>🤞</button>
       </div>
 
       {!winner ? '' : <WinnerModal setWinner={setWinner} />}
+
     </div>
   );
 }
 
 export default Game;
+

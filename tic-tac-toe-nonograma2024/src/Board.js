@@ -17,7 +17,8 @@ function Board({ grid, rowsClues, colsClues, onClick }) {
         }}
       >
         <div>{/* top-left corner square */}</div>
-        {colsClues.map((clue, i) =>
+        { colsClues === null ? ''
+        : colsClues.map((clue, i) =>
           <Clue clue={clue} key={i} />
         )}
       </div>
@@ -29,7 +30,9 @@ function Board({ grid, rowsClues, colsClues, onClick }) {
             gridTemplateColumns: '60px'
           }}
         >
-          {rowsClues.map((clue, i) =>
+          {
+            rowsClues === null ? ''
+          : rowsClues.map((clue, i) =>
             <Clue clue={clue} key={i} />
           )}
         </div>

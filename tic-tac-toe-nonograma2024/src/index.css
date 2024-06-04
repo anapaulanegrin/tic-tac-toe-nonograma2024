@@ -7,7 +7,6 @@ body {
   padding: 0;
   justify-content: center;
 
-
 }
 
 
@@ -119,6 +118,7 @@ body {
   align-items: center;
   flex-direction: column;
   /* esto lo cambie yo, no se si esta bien*/
+  position: relative;
 }
 
 .game-info {
@@ -199,7 +199,7 @@ body {
 
   box-shadow: 0 0px 3px 1.5px rgba(0, 0, 0, 0.301);
   animation: move-in .4s ease-out both;
-  
+
 }
 
 @keyframes move-in {
@@ -240,7 +240,7 @@ body {
 
   background: white;
   box-shadow: 0 0 0 black;
-  transition: all .5s linear;
+  transition: all .2s linear;
 
   padding: 0 3px;
   /* transition: all .5 linear; */
@@ -259,22 +259,57 @@ body {
 }
 
 
-/* .button-container button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-} */
-
-/* Estilos para el botón "Pintar" cuando está seleccionado */
-/* .button-container button.painting-mode {
-  background-color: #28a745;
+.grid-auxiliar {
+  background-color: black;
 }
 
+.container-help {
+  display: flex;
+  justify-content: center;
+  align-self: center;
 
-.button-container button:hover {
-  background-color: #0056b3;
-} */
+  padding: 20px 40px 40px 20px;
+
+  background-color: #bef1f2;
+  z-index: 2;
+
+  position: absolute;
+  top: 148px;
+
+  animation: 
+  scale-in-center .5s cubic-bezier(.25, .46, .45, .94),
+  scale-out-center .5s cubic-bezier(.25,.46,.45,.94) 2s reverse;
+
+}
+
+@keyframes scale-in-center {
+  0% {
+    transform: scale(0);
+    opacity: 1
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1
+  }
+}
+
+@keyframes scale-out-center {
+  0% {
+    transform: scale(0);
+    opacity: 1
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1
+  }
+}
+
+.cross {
+  font-weight: 800;
+  border: none;
+  background: none;
+
+  color: white;
+}
