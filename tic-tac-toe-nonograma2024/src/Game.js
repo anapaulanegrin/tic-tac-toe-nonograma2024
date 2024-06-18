@@ -14,13 +14,13 @@ import { activeClue, activeClueInicial } from './store/activeClue';
 
 
 // Esto tienen q sacarlo cuando este el prolog
-const gridAuxiliar = [
-  ['_', '_', '_', '_', "#"],
-  ['_', "#", '_', "#", '_'],
-  ['_', '_', "#", '_', '_'],
-  ["#", "#", '_', "#", '_'],
-  ["#", '_', "#", '_', "#"]
-]
+// const gridAuxiliar = [
+//   ['_', '_', '_', '_', "#"],
+//   ['_', "#", '_', "#", '_'],
+//   ['_', '_', "#", '_', '_'],
+//   ["#", "#", '_', "#", '_'],
+//   ["#", '_', "#", '_', "#"]
+// ]
 
 let pengine;
 
@@ -36,8 +36,8 @@ function Game() {
   const [modo, setModo] = useState("Cross mode");
   const [winner, setWinner] = useState(false);
 
-  // const [ gridAuxiliar, setGridAuxiliar ] = useState(null);
-  
+  const [gridAuxiliar, setGridAuxiliar] = useState(null);
+
   const [openHelp, setOpenHelp] = useState(false)
 
   const togglePaintingMode = () => {
@@ -59,6 +59,10 @@ function Game() {
     }
   }, [grid, rowsClues, colsClues]);
 
+  const checkClue = () => {
+
+  }
+
   const checkWinner = (row, col) => {
     const allActive = window.document.getElementsByClassName('active');
     const total = row + col;
@@ -72,20 +76,16 @@ function Game() {
   function handleServerReady(instance) {
     pengine = instance;
     const queryS = 'init(RowClues, ColumClues, Grid)';
-    // const queryGridWin = gridAuxiliar
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['Grid']);
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
-        InicialCheck(response['RowClues'], response['ColumClues'], response['Grid'])
+        InicialCheck(response['RowClues'], response['ColumClues'], response['Grid']);
+        setGridAuxiliar(response['Grid']);
+        // inicialGridWinner(response['RowClues'], response['ColumClues'])
       }
     });
-    // pengine.query(queryGridWin, (success, response) => {
-    //   if (success) {
-    //     setGridAuxiliar(response['gridAuxiliar']);
-    //   }
-    // });
   }
 
   function InicialCheck(row, col, grid) {
@@ -140,7 +140,23 @@ function Game() {
     return null;
   }
 
+  const inicialGridWinner = (row, col) => {
+    const rowsCluesS = JSON.stringify(row);
+    const colsCluesS = JSON.stringify(col);
+    const queryGridWin = `grillaGanadora(${rowsCluesS},${colsCluesS},Grilla)`;
+    pengine.query(queryGridWin, (success, response) => {
+      if (success) {
+        console.log(response['Grilla']);
+        console.log(grid);
+        setGridAuxiliar(response['Grilla']);
+      }
+    });
+  }
+
   const checkHelp = () => {
+    inicialGridWinner(rowsClues, colsClues);
+    // console.log(pedro);
+    // console.log(gridAuxiliar);
     // Cambia el estado para ver la ayuda
     setOpenHelp(prevState => !prevState)
     // Setea un delay y saca la ayuda
@@ -182,7 +198,7 @@ function Game() {
             {isPaintingMode ? '⬛' : 'X'}
           </button>
         </div>
-        <button className='pist-button pista'>💡</button>
+        <button onClick={checkClue} className='pist-button pista'>💡</button>
         <button onClick={checkHelp} className='pist-button todo'>🤞</button>
       </div>
 

@@ -270,15 +270,17 @@ body {
 
   padding: 20px 40px 40px 20px;
 
-  background-color: #bef1f2;
+  /* background-color: #bef1f2; */
   z-index: 2;
 
   position: absolute;
-  top: 148px;
+  /* top: 148px; */
+  top: 125px;
+  right: -300px;
 
   animation: 
   scale-in-center .5s cubic-bezier(.25, .46, .45, .94),
-  scale-out-center .5s cubic-bezier(.25,.46,.45,.94) 2s reverse;
+  scale-out-center .4s cubic-bezier(.25,.46,.45,.94) 2.2s reverse;
 
 }
 
