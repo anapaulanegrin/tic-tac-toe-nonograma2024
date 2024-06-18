@@ -252,7 +252,7 @@ body {
   scale: 1.1;
 }
 
-.todo:focus {
+.todo:active {
   background-color: rgba(53, 121, 185, 0.897);
   border-color: rgba(53, 121, 185, 0.897);
   scale: 1.1;
@@ -275,7 +275,7 @@ body {
 
   position: absolute;
   /* top: 148px; */
-  top: 125px;
+  /* top: 125px; */
   right: -300px;
 
   animation: 

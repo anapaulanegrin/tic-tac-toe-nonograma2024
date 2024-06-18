@@ -293,7 +293,7 @@ agregarVacios(Cant, LongFila, ListaAux, Lista) :-
     Cant > 0,
     proper_length(ListaAux, LongListaAux),
     LongListaAux < LongFila,
-    insertarAlFinal("_", ListaAux, ListaNueva),
+    insertarAlFinal("X", ListaAux, ListaNueva), 
     CantActualizada is Cant - 1,
     agregarVacios(CantActualizada, LongFila, ListaNueva, Lista).
 

@@ -5,23 +5,6 @@ import Board from './Board';
 import WinnerModal from './components/WinnerModal';
 import { activeClue, activeClueInicial } from './store/activeClue';
 
-// logica para sumar, puede ser otra funcion, compruebe que va en la grilla, es decir el valor. 
-// query pedro = (grilla, i, j)}
-// seguramente necesiten hacer una funcion con async await
-// -------------------
-// Otra opcion es no utilizar la grilla, usar la auxiliar y hacer una funcion que simplemente traiga el i y j. para luego devolver
-// el resultado en la grilla auxiliar.
-
-
-// Esto tienen q sacarlo cuando este el prolog
-// const gridAuxiliar = [
-//   ['_', '_', '_', '_', "#"],
-//   ['_', "#", '_', "#", '_'],
-//   ['_', '_', "#", '_', '_'],
-//   ["#", "#", '_', "#", '_'],
-//   ["#", '_', "#", '_', "#"]
-// ]
-
 let pengine;
 
 function Game() {
@@ -37,6 +20,7 @@ function Game() {
   const [winner, setWinner] = useState(false);
 
   const [gridAuxiliar, setGridAuxiliar] = useState(null);
+  const [helpMode, setHelpMode] = useState(false)
 
   const [openHelp, setOpenHelp] = useState(false)
 
@@ -56,11 +40,18 @@ function Game() {
   useEffect(() => {
     if (grid && rowsClues && colsClues) {
       checkWinner(rowsClues.length, colsClues.length);
+      inicialGridWinner(rowsClues, colsClues);
     }
   }, [grid, rowsClues, colsClues]);
 
-  const checkClue = () => {
+  // useEffect( () => {
+  //   inicialGridWinner(rowsClues, colsClues);
+  // }, [grid])
 
+  const checkClue = () => {
+    // Entra en estado de busqueda?
+    setHelpMode(prevState => !prevState)
+    console.log(helpMode);
   }
 
   const checkWinner = (row, col) => {
@@ -76,16 +67,30 @@ function Game() {
   function handleServerReady(instance) {
     pengine = instance;
     const queryS = 'init(RowClues, ColumClues, Grid)';
+    // let rowsCluesS = null;
+    // let colsCluesS = null;
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['Grid']);
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
         InicialCheck(response['RowClues'], response['ColumClues'], response['Grid']);
+        // rowsCluesS = response['ColumClues'];
+        // colsCluesS = response['ColumClues'];
         setGridAuxiliar(response['Grid']);
         // inicialGridWinner(response['RowClues'], response['ColumClues'])
       }
     });
+    // const rowSol = JSON.stringify(rowsCluesS)
+    // const colSol = JSON.stringify(colsCluesS)
+    // const queryGridWin = `grillaGanadora(${rowSol},${colSol},Grilla)`;
+    // pengine.query(queryGridWin, (success, response) => {
+    //   if (success) {
+    //     // console.log(response['Grilla']);
+    //     // console.log(grid);
+    //     setGridAuxiliar(response['Grilla']);
+    //   }
+    // });
   }
 
   function InicialCheck(row, col, grid) {
@@ -116,24 +121,34 @@ function Game() {
       return;
     }
 
-    // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
-    const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
-    const rowsCluesS = JSON.stringify(rowsClues);
-    const colsCluesS = JSON.stringify(colsClues);
-    const queryS = `put("${elemento}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`;
-    setWaiting(true);
+    if (helpMode) {
+      // console.log('esta es la grilla vista',grid[i][j]);
+      // console.log('esta es la grilla nueva',gridAuxiliar[i][j]);
+      grid[i][j] = gridAuxiliar[i][j]
+      setHelpMode(prevState => !prevState)
+      // console.log(helpMode);
 
-    pengine.query(queryS, (success, response) => {
-      if (success) {
-        setGrid(response['ResGrid']);
-        const a = response['RowSat'];
-        const b = response['ColSat'];
-        activeClue(a, b, i, j)
-      }
+    } else {
 
-      checkWinner(rowsClues.length, colsClues.length)
-      setWaiting(false);
-    });
+      // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
+      const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
+      const rowsCluesS = JSON.stringify(rowsClues);
+      const colsCluesS = JSON.stringify(colsClues);
+      const queryS = `put("${elemento}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`;
+      setWaiting(true);
+
+      pengine.query(queryS, (success, response) => {
+        if (success) {
+          setGrid(response['ResGrid']);
+          const a = response['RowSat'];
+          const b = response['ColSat'];
+          activeClue(a, b, i, j)
+        }
+
+        checkWinner(rowsClues.length, colsClues.length)
+        setWaiting(false);
+      });
+    }
   }
 
   if (!grid) {
@@ -146,17 +161,15 @@ function Game() {
     const queryGridWin = `grillaGanadora(${rowsCluesS},${colsCluesS},Grilla)`;
     pengine.query(queryGridWin, (success, response) => {
       if (success) {
-        console.log(response['Grilla']);
-        console.log(grid);
+        // console.log(response['Grilla']);
+        // console.log(grid);
         setGridAuxiliar(response['Grilla']);
       }
     });
   }
 
   const checkHelp = () => {
-    inicialGridWinner(rowsClues, colsClues);
-    // console.log(pedro);
-    // console.log(gridAuxiliar);
+    // inicialGridWinner(rowsClues, colsClues);
     // Cambia el estado para ver la ayuda
     setOpenHelp(prevState => !prevState)
     // Setea un delay y saca la ayuda
@@ -199,7 +212,7 @@ function Game() {
           </button>
         </div>
         <button onClick={checkClue} className='pist-button pista'>💡</button>
-        <button onClick={checkHelp} className='pist-button todo'>🤞</button>
+        <button onClick={checkHelp} className='pist-button todo'> ✅ </button>
       </div>
 
       {!winner ? '' : <WinnerModal setWinner={setWinner} />}
