@@ -7,6 +7,8 @@ import { activeClue, activeClueInicial } from './store/activeClue';
 
 let pengine;
 
+let count = 0;
+
 function Game() {
 
   // State
@@ -38,20 +40,17 @@ function Game() {
   }, []);
 
   useEffect(() => {
-    if (grid && rowsClues && colsClues) {
-      checkWinner(rowsClues.length, colsClues.length);
-      inicialGridWinner(rowsClues, colsClues);
+    if (count < 2) {
+      if (grid && rowsClues && colsClues) {
+        checkWinner(rowsClues.length, colsClues.length);
+        inicialGridWinner(rowsClues, colsClues);
+      }
+      count++
     }
   }, [grid, rowsClues, colsClues]);
 
-  // useEffect( () => {
-  //   inicialGridWinner(rowsClues, colsClues);
-  // }, [grid])
-
   const checkClue = () => {
-    // Entra en estado de busqueda?
     setHelpMode(prevState => !prevState)
-    console.log(helpMode);
   }
 
   const checkWinner = (row, col) => {
@@ -67,30 +66,15 @@ function Game() {
   function handleServerReady(instance) {
     pengine = instance;
     const queryS = 'init(RowClues, ColumClues, Grid)';
-    // let rowsCluesS = null;
-    // let colsCluesS = null;
     pengine.query(queryS, (success, response) => {
       if (success) {
         setGrid(response['Grid']);
         setRowsClues(response['RowClues']);
         setColsClues(response['ColumClues']);
         InicialCheck(response['RowClues'], response['ColumClues'], response['Grid']);
-        // rowsCluesS = response['ColumClues'];
-        // colsCluesS = response['ColumClues'];
         setGridAuxiliar(response['Grid']);
-        // inicialGridWinner(response['RowClues'], response['ColumClues'])
       }
     });
-    // const rowSol = JSON.stringify(rowsCluesS)
-    // const colSol = JSON.stringify(colsCluesS)
-    // const queryGridWin = `grillaGanadora(${rowSol},${colSol},Grilla)`;
-    // pengine.query(queryGridWin, (success, response) => {
-    //   if (success) {
-    //     // console.log(response['Grilla']);
-    //     // console.log(grid);
-    //     setGridAuxiliar(response['Grilla']);
-    //   }
-    // });
   }
 
   function InicialCheck(row, col, grid) {
@@ -106,7 +90,6 @@ function Game() {
             setGrid(response['ResGrid']);
             const a = response['RowSat'];
             const b = response['ColSat'];
-            // console.log('cuadrado en grilla: ', ',en la fila: ', i,'y columna: ', j);
             activeClueInicial(a, b, i, j)
           }
         });
@@ -122,12 +105,8 @@ function Game() {
     }
 
     if (helpMode) {
-      // console.log('esta es la grilla vista',grid[i][j]);
-      // console.log('esta es la grilla nueva',gridAuxiliar[i][j]);
       grid[i][j] = gridAuxiliar[i][j]
       setHelpMode(prevState => !prevState)
-      // console.log(helpMode);
-
     } else {
 
       // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
@@ -161,15 +140,12 @@ function Game() {
     const queryGridWin = `grillaGanadora(${rowsCluesS},${colsCluesS},Grilla)`;
     pengine.query(queryGridWin, (success, response) => {
       if (success) {
-        // console.log(response['Grilla']);
-        // console.log(grid);
         setGridAuxiliar(response['Grilla']);
       }
     });
   }
 
   const checkHelp = () => {
-    // inicialGridWinner(rowsClues, colsClues);
     // Cambia el estado para ver la ayuda
     setOpenHelp(prevState => !prevState)
     // Setea un delay y saca la ayuda
@@ -199,7 +175,6 @@ function Game() {
               onClick={(i, j) => handleClick(i, j)}
               className='grid-auxiliar'
             />
-            {/* <button className='pist-button cross'>X</button> */}
           </div>
         )
           : ''
