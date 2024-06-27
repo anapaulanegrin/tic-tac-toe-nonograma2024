@@ -26,6 +26,8 @@ function Game() {
 
   const [openHelp, setOpenHelp] = useState(false)
 
+  const [varAux, setVarAux] = useState(null)
+
   const togglePaintingMode = () => {
     setIsPaintingMode(prevState => !prevState);
     if (modo === "Cross mode") { setModo("Paint mode"); setElemento('#'); }
@@ -48,6 +50,12 @@ function Game() {
       count++
     }
   }, [grid, rowsClues, colsClues]);
+
+  // useEffect( () => {
+  //   setTimeout(() => {  
+  //     grid[i][j] = varAux
+  //   }, 500);
+  // },[helpMode])
 
   const checkClue = () => {
     setHelpMode(prevState => !prevState)
@@ -103,10 +111,30 @@ function Game() {
     if (waiting) {
       return;
     }
-
+    
+    setVarAux(grid[i][j])
     if (helpMode) {
-      grid[i][j] = gridAuxiliar[i][j]
-      setHelpMode(prevState => !prevState)
+      if(grid[i][j] != gridAuxiliar[i][j]){
+        // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
+        const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
+        const rowsCluesS = JSON.stringify(rowsClues);
+        const colsCluesS = JSON.stringify(colsClues);
+        const queryS = `put("${gridAuxiliar[i][j]}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat)`;
+        setWaiting(true);
+
+        pengine.query(queryS, (success, response) => {
+          if (success) {
+            setGrid(response['ResGrid']);
+            const a = response['RowSat'];
+            const b = response['ColSat'];
+            activeClue(a, b, i, j)
+          }
+
+          checkWinner(rowsClues.length, colsClues.length)
+          setWaiting(false);
+        });
+      }
+      setHelpMode(false);
     } else {
 
       // Build Prolog query to make a move and get the new satisfacion status of the relevant clues.    
